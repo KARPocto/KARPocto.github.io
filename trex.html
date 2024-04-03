@@ -1,4 +1,4 @@
-<script src="https://cdn.jsdelivr.net/gh/aframevr/aframe@1c2407b26c61958baa93967b5412487cd94b290b/dist/aframe-master.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/aframevr/aframe@1.3.0/dist/aframe-master.min.js"></script>
 <script src="js/nft.js"></script>
 
 <style>
@@ -25,30 +25,22 @@
 <body style="margin : 0px; overflow: hidden;">
   <!-- minimal loader shown until image descriptors are loaded -->
   <div class="arjs-loader">
-    <div>Chargement Raptor2</div>
+    <div>Loading, please wait...</div>
   </div>
   <a-scene
     vr-mode-ui="enabled: false;"
-    renderer="logarithmicDepthBuffer: true;"
+    renderer="logarithmicDepthBuffer: true; precision: medium;"
     embedded
     arjs="trackingMethod: best; sourceType: webcam;debugUIEnabled: false;"
   >
-    <!-- we use cors proxy to avoid cross-origin problems -->
-
-    <!--
-      ⚠️⚠️⚠️
-      https://arjs-cors-proxy.herokuapp.com/ is now offline, Heroku has dismissed all his free plans from November 2022.
-      You need to host your own proxy and use it instead. The proxy is based on CORS Anywhere (see https://github.com/Rob--W/cors-anywhere).
-      ⚠️⚠️⚠️
-    -->
-
+    <!-- we use cors proxy to avoid cross-origin problems ATTENTION! you need to set up your server -->
     <a-nft
       type="nft"
       url="markers/raptor"
       smooth="true"
-      smoothCount="30"
-      smoothTolerance=".001"
-      smoothThreshold="20"
+      smoothCount="10"
+      smoothTolerance=".01"
+      smoothThreshold="5"
     >
       <a-entity
         gltf-model="modeles3D/vaisseau.gltf"
@@ -57,17 +49,25 @@
       >
       </a-entity>
     </a-nft>
-     <a-entity camera></a-entity>
+    <a-entity camera></a-entity>
   </a-scene>
 </body>
 
 <script> 
 
-window.addEventListener("arjs-nft-loaded", (event) => {
-  console.log("trex2");
-});
+  window.addEventListener("arjs-nft-loaded", (event) => {
+    console.log("trex2");
+  });
+  
+  
+  const constraints = {
+  video: {
+    width: { ideal: 1920 }, // Définir la largeur souhaitée
+    height: { ideal: 1080 }   // Définir la hauteur souhaitée
+  }
+};
 
-navigator.mediaDevices.getUserMedia({ video: true })
+navigator.mediaDevices.getUserMedia(constraints)
   .then(stream => {
     // Obtenir les paramètres de la caméra à partir du flux vidéo
     const videoTrackSettings = stream.getVideoTracks()[0].getSettings();
@@ -80,5 +80,5 @@ navigator.mediaDevices.getUserMedia({ video: true })
   .catch(error => {
     console.error('Erreur lors de l\'accès à la caméra : ', error);
   });
-
-</script>
+  
+  </script>
