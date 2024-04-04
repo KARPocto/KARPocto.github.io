@@ -25,11 +25,11 @@
 <body style="margin : 0px; overflow: hidden;">
   <!-- minimal loader shown until image descriptors are loaded -->
   <div class="arjs-loader">
-    <div>Loading, please wait raptor...</div>
+    <div>Loading, please wait raptor3...</div>
   </div>
   <a-scene
     vr-mode-ui="enabled: false;"
-    renderer="logarithmicDepthBuffer: true; precision: medium;"
+    renderer="logarithmicDepthBuffer: true; precision: high;"
     embedded
     arjs="trackingMethod: best; sourceType: webcam;debugUIEnabled: false;"
   >
@@ -38,15 +38,14 @@
       type="nft"
       url="markers/raptor"
       smooth="true"
-      smoothCount="1000"
+      smoothCount="2000"
       smoothTolerance="0.001"
       smoothThreshold="115"
-      size="400"
     >
       <a-entity
         gltf-model="modeles3D/vaisseau.gltf"
-        scale="5 5 5"
-        position="0 0 0"
+        scale="15 15 15"
+        position="350 150 -100"
       >
       </a-entity>
     </a-nft>
