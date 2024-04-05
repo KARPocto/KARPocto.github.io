@@ -27,33 +27,31 @@
   <div class="arjs-loader">
     <div>Loading, please wait raptor4...</div>
   </div>
-  <a-scene
+
+<a-scene
     vr-mode-ui="enabled: false;"
-    renderer="logarithmicDepthBuffer: true; precision: high;"
-    embedded
-    arjs="trackingMethod: best; sourceType: webcam;debugUIEnabled: false;"
-    isMobile="true"
-  >
-    <!-- we use cors proxy to avoid cross-origin problems ATTENTION! you need to set up your server -->
-    <a-nft videohandler
-      type="nft"
-      url="markers/raptor"
-      smooth="true"
-      smoothCount="2000"
-      smoothTolerance="2000"
-      smoothThreshold="115"
-      size="0.18"
+    renderer='antialias: true; alpha: true; precision: mediump;'
+    embedded arjs='trackingMethod: best; sourceType: webcam; debugUIEnabled: false;'>
+
+    <a-assets>
+        <video src="videos/octo-video.mp4"
+            preload="auto" id="vid" response-type="arraybuffer" loop
+            autoplay autofocus playsinline>
+        </video>
+    </a-assets>
+
+    <a-nft
+        videohandler
+        type='nft' url='markers/raptor'
     >
-      <a-entity
-        gltf-model="modeles3D/vaisseau.gltf"
-        scale="15 15 15"
-        position="350 150 -100"
-      >
-      </a-entity>
+    
+    <a-video src="#vid" position="10 -10 -175" rotation="-90 0 0" width='400'  height='400'>
+    </a-video>
 
     </a-nft>
     <a-entity camera></a-entity>
-  </a-scene>
+</a-scene>
+  
 </body>
 
 <script> 

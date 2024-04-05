@@ -6,7 +6,8 @@
   </head>
   <body style="margin: 0px; overflow: hidden;">
     <a-scene embedded arjs >
-      <a-marker preset="hiro">
+
+        <a-marker type="pattern" url="markers/ballon.patt">
 
         <a-video
           position="0 0 0"
@@ -16,6 +17,7 @@
           rotation="-90 0 0" 
         ></a-video>
       </a-marker>
+
       <a-entity camera></a-entity>
     </a-scene>
   </body>
