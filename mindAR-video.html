@@ -8,15 +8,20 @@
         AFRAME.registerComponent("foo", {
             init: function() {
             this.el.addEventListener("click", (e)=>{
-                console.log("HELLO");
+                console.log("click");
                 const video = document.getElementById('myVideo');
+                const videoControls = document.getElementById('image');
           // Vérifier si la vidéo est en pause
           if (video.paused) {
             // Démarrer la lecture de la vidéo
             video.play();
+            videoControls.setAttribute("src" , "#pause")
+            console.log()
+            
           } else {
             // Mettre la vidéo en pause
             video.pause();
+            videoControls.setAttribute("src" , "#play")
           }
             
             })
@@ -31,12 +36,13 @@
       <a-assets>
         <video id="myVideo" muted autoplay loop src="videos/octo-video.mp4"></video>
         <img id="play" src="images/play-button.png" >
+        <img id="pause" src="images/pause.png" >
       </a-assets>
 
       <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
-      <a-entity mindar-image-target="targetIndex: 0" raycaster="objects: #vid">
-        <a-video src="#myVideo" position="0 0 0" height="0.5" width="0.5" rotation="90 0 0" id="vid" foo>
-            <a-image src="#play" position="0 -0.35 0" height="0.15" width="0.15" rotation="1 0 0" id="vid"></a-image>
+      <a-entity mindar-image-target="targetIndex: 0" raycaster="objects: #video, #image" foo>
+        <a-video id="video" src="#myVideo" position="0 0 0" height="0.5" width="0.5" rotation="90 0 0" >
+            <a-image id="image" src="#play" position="0 -0.35 0" height="0.15" width="0.15" rotation="1 0 0" ></a-image>
         </a-video>
       </a-entity>
       
