@@ -45,7 +45,29 @@
             }
           }
         });
-      </script>
+
+        // register component
+        AFRAME.registerComponent("zoom", {
+            // init callback
+            init: function() {
+            // react to press / release events to know if the element is selected
+            this.el.addEventListener("mousedown", e => {
+                this.selected = true;
+            })
+            this.el.addEventListener("mouseup", e => {
+                this.selected = false;
+            })
+            // if this is selected, scale up/down when the mouse is scrolled
+            this.el.sceneEl.addEventListener("mousewheel", evt => {
+                if (!this.selected) return; // ignore when not selected
+                const scale_factor = evt.deltaY < 0 ? 1.1 : 0.9 // scale up or down depending on the scroll direction
+                this.el.object3D.scale.multiplyScalar(scale_factor);
+                evt.preventDefault();
+            })
+            }
+        })
+
+    </script>
 
 
   </head>
@@ -59,7 +81,7 @@
       <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
 
       <a-entity mindar-image-target="targetIndex: 0"  raycaster="objects: #model" >
-        <a-gltf-model drag-rotate id="model" rotation="0 0 0 " position="0 0 0" scale="0.1 0.1 0.1" src="#avatarModel" animation="property: position; to: 0 0.1 0.1; dur: 1000; easing: easeInOutQuad; loop: true; dir: alternate">
+        <a-gltf-model drag-rotate zoom id="model" rotation="0 0 0 " position="0 0 0" scale="0.1 0.1 0.1" src="#avatarModel" animation="property: position; to: 0 0.1 0.1; dur: 1000; easing: easeInOutQuad; loop: true; dir: alternate">
       </a-entity>
 
     </a-scene>
