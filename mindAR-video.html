@@ -1,52 +1,88 @@
+<!DOCTYPE html>
 <html>
-  <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <script src="https://cdn.jsdelivr.net/gh/aframevr/aframe@1.3.0/dist/aframe-master.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
-    
-    <script>
-        AFRAME.registerComponent("foo", {
-            init: function() {
-            this.el.addEventListener("click", (e)=>{
-                console.log("click");
-                const video = document.getElementById('myVideo');
-                const videoControls = document.getElementById('image');
+<head>
+  <!-- Meta pour la vue sur les appareils mobiles -->
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  
+  <!-- Chargement des bibliothèques -->
+  <script src="https://cdn.jsdelivr.net/gh/aframevr/aframe@1.3.0/dist/aframe-master.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
+  <!-- Script pour le composant personnalisé "play-pause" -->
+  <script>
+    AFRAME.registerComponent("play-pause", {
+      init: function() {
+
+
+        const video = document.getElementById('myVideo');
+        const videoControls = document.getElementById('image');
+
+        document.getElementById("reload").addEventListener("click", function() {
+            console.log("reload");
+            video.currentTime = 0;
+            video.play();
+        });
+
+        this.el.addEventListener("click", (e)=>{
+          console.log("click");
           // Vérifier si la vidéo est en pause
           if (video.paused) {
             // Démarrer la lecture de la vidéo
             video.play();
             videoControls.setAttribute("src" , "#pause")
-            console.log()
-            
           } else {
             // Mettre la vidéo en pause
             video.pause();
             videoControls.setAttribute("src" , "#play")
           }
-            
-            })
-            }
         })
-    </script>
 
-  </head>
-  <body>
-    <a-scene cursor="rayOrigin: mouse" mindar-image="imageTargetSrc: images/raptor600.mind;filterMinCF:0.0005; filterBeta: 0.0005" color-space="sRGB" renderer="colorManagement: true, physicallyCorrectLights" vr-mode-ui="enabled: false" device-orientation-permission-ui="enabled: false">
-      
-      <a-assets>
-        <video id="myVideo" muted autoplay loop src="videos/octo-video.mp4"></video>
-        <img id="play" src="images/play-button.png" >
-        <img id="pause" src="images/pause.png" >
-      </a-assets>
 
-      <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
-      <a-entity mindar-image-target="targetIndex: 0" raycaster="objects: #video, #image" foo>
-        <a-video id="video" src="#myVideo" position="0 0 0" height="0.5" width="0.5" rotation="90 0 0" >
-            <a-image id="image" src="#play" position="0 -0.35 0" height="0.15" width="0.15" rotation="1 0 0" ></a-image>
-        </a-video>
-      </a-entity>
-      
-    </a-scene>
+      }
+    })
+  </script>
+</head>
+<body>
 
-  </body>
+  <!-- Scène A-Frame -->
+  <a-scene cursor="rayOrigin: mouse" mindar-image="imageTargetSrc: images/raptor600.mind;filterMinCF:0.0005; filterBeta: 0.0005" color-space="sRGB" renderer="colorManagement: true, physicallyCorrectLights" vr-mode-ui="enabled: false" device-orientation-permission-ui="enabled: false">
+    
+    <!-- Ressources pré-chargées -->
+    <a-assets>
+      <video id="myVideo" muted autoplay loop src="videos/octo-video.mp4"></video>
+      <img id="play" src="images/play-button.png" >
+      <img id="pause" src="images/pause.png" >
+    </a-assets>
+
+    <!-- Caméra -->
+    <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
+
+    <!-- Entité vidéo avec cible MindAR -->
+    <a-entity id="maVideo" mindar-image-target="targetIndex: 0" raycaster="objects: #video, #image" play-pause>
+      <a-video id="video" src="#myVideo" position="0 0 0" height="0.5" width="0.5" rotation="90 0 0" >
+          <a-image id="image" src="#play" position="0 -0.35 0" height="0.15" width="0.15" rotation="1 0 0" ></a-image>
+      </a-video>
+    </a-entity>
+    
+  </a-scene>
+
+  <!-- Bouton de rechargement -->
+  <div id="reload" style="display:none;width:25px;background-image: url('images/reload.png');background-size:cover;background-color:red;height:25px;position:absolute;right:20px;bottom:20px"> </div>
+
+  <!-- Script pour détecter les événements de cible trouvée ou perdue -->
+  <script>
+    const maVideo = document.querySelector('#maVideo');
+    maVideo.addEventListener("targetFound", event => {
+      console.log("target found");
+      document.getElementById("reload").style.display = "block";
+    });
+
+    maVideo.addEventListener("targetLost", event => {
+      console.log("target lost");
+      document.getElementById("reload").style.display = "none";
+    });
+  </script>
+
+</body>
 </html>
