@@ -14,8 +14,6 @@
     AFRAME.registerComponent("play-pause", {
       init: function() {
 
-
-        const video = document.getElementById('Video1');
         const videoControls = document.getElementById('image');
 
         document.getElementById("reload").addEventListener("click", function() {
@@ -25,7 +23,13 @@
         });
 
         this.el.addEventListener("click", (e)=>{
+
           console.log("click");
+
+          const id = $(this.el).attr("id");
+          const video = document.getElementById('video-' + id);
+
+          console.log("ID de l'élément:", id);
           // Vérifier si la vidéo est en pause
           if (video.paused) {
             // Démarrer la lecture de la vidéo
@@ -50,9 +54,9 @@
  
     <!-- Ressources pré-chargées -->
     <a-assets>
-      <video id="Video1" muted autoplay loop src="videos/octo-video.mp4"></video>
-      <video id="Video2" muted autoplay loop src="videos/octo-video2.mp4"></video>
-      <video id="Video3" muted autoplay loop src="videos/octo-video3.mp4"></video>
+      <video id="video-maVideo1" muted autoplay loop src="videos/octo-video.mp4"></video>
+      <video id="video-maVideo2" muted autoplay loop src="videos/octo-video2.mp4"></video>
+      <video id="video-maVideo3" muted autoplay loop src="videos/octo-video3.mp4"></video>
       <img id="play" src="images/play-button.png" >
       <img id="pause" src="images/pause.png" >
     </a-assets>
@@ -61,20 +65,20 @@
     <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
 
     <!-- Entité vidéo avec cible MindAR -->
-    <a-entity id="maVideo" mindar-image-target="targetIndex: 0" raycaster="objects: #video, #image" play-pause>
-      <a-video  src="#Video1" position="0 0 0" height="0.5" width="0.5" rotation="90 0 0" >
+    <a-entity id="maVideo1" mindar-image-target="targetIndex: 0" raycaster="objects: #maVideo1, #image" play-pause>
+      <a-video  id="maVideo1" src="#video-maVideo1" position="0 0 0" height="0.5" width="0.5" rotation="0 0 0" >
           <a-image id="image" src="#play" position="0 -0.35 0" height="0.15" width="0.15" rotation="1 0 0" ></a-image>
       </a-video>
     </a-entity>
 
-    <a-entity id="maVideo" mindar-image-target="targetIndex: 1" raycaster="objects: #video, #image" play-pause>
-        <a-video  src="#Video2" position="0 0 0" height="0.5" width="0.5" rotation="90 0 0" >
+    <a-entity id="maVideo2" mindar-image-target="targetIndex: 1" raycaster="objects: #maVideo2, #image" play-pause>
+        <a-video id="maVideo2" src="#video-maVideo2" position="0 0 0" height="0.5" width="0.5" rotation="0 0 0" >
             <a-image id="image" src="#play" position="0 -0.35 0" height="0.15" width="0.15" rotation="1 0 0" ></a-image>
         </a-video>
       </a-entity>
 
-      <a-entity id="maVideo" mindar-image-target="targetIndex: 2" raycaster="objects: #video, #image" play-pause>
-        <a-video  src="#Video3" position="0 0 0" height="0.5" width="0.5" rotation="90 0 0" >
+      <a-entity id="maVideo3" mindar-image-target="targetIndex: 2" raycaster="objects: #maVideo3, #image" play-pause>
+        <a-video id="maVideo3" src="#video-maVideo3" position="0 0 0" height="0.5" width="0.5" rotation="0 0 0" >
             <a-image id="image" src="#play" position="0 -0.35 0" height="0.15" width="0.15" rotation="1 0 0" ></a-image>
         </a-video>
       </a-entity>
