@@ -11,10 +11,11 @@
 
   <!-- Script pour le composant personnalisé "play-pause" -->
   <script>
+
+    // Composant Play-Pause pour les vidéos
+
     AFRAME.registerComponent("play-pause", {
       init: function() {
-
-        const videoControls = document.getElementById('image');
 
         document.getElementById("reload").addEventListener("click", function() {
             console.log("reload");
@@ -26,8 +27,14 @@
 
           console.log("click");
 
+          // Récupère l'id de l'élément sur lequel on a cliqué
           const id = $(this.el).attr("id");
+
+          // on récupère sa vidéo associé
           const video = document.getElementById('video-' + id);
+
+          // on récupère son bouton de lecture associé
+          const videoControls = document.getElementById('image-'+ id);
 
           console.log("ID de l'élément:", id);
           // Vérifier si la vidéo est en pause
@@ -65,21 +72,21 @@
     <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
 
     <!-- Entité vidéo avec cible MindAR -->
-    <a-entity id="maVideo1" mindar-image-target="targetIndex: 0" raycaster="objects: #maVideo1, #image" play-pause>
+    <a-entity class="video1" id="maVideo1" mindar-image-target="targetIndex: 0" raycaster="objects: #maVideo1, #image" play-pause>
       <a-video  id="maVideo1" src="#video-maVideo1" position="0 0 0" height="0.5" width="0.5" rotation="0 0 0" >
-          <a-image id="image" src="#play" position="0 -0.35 0" height="0.15" width="0.15" rotation="1 0 0" ></a-image>
+          <a-image id="image-maVideo1" src="#play" position="0 -0.35 0" height="0.15" width="0.15" rotation="1 0 0" ></a-image>
       </a-video>
     </a-entity>
 
-    <a-entity id="maVideo2" mindar-image-target="targetIndex: 1" raycaster="objects: #maVideo2, #image" play-pause>
+    <a-entity class="video" id="maVideo2" mindar-image-target="targetIndex: 1" raycaster="objects: #maVideo2, #image" play-pause>
         <a-video id="maVideo2" src="#video-maVideo2" position="0 0 0" height="0.5" width="0.5" rotation="0 0 0" >
-            <a-image id="image" src="#play" position="0 -0.35 0" height="0.15" width="0.15" rotation="1 0 0" ></a-image>
+            <a-image id="image-maVideo2" src="#play" position="0 -0.35 0" height="0.15" width="0.15" rotation="1 0 0" ></a-image>
         </a-video>
       </a-entity>
 
-      <a-entity id="maVideo3" mindar-image-target="targetIndex: 2" raycaster="objects: #maVideo3, #image" play-pause>
+      <a-entity class="video" id="maVideo3" mindar-image-target="targetIndex: 2" raycaster="objects: #maVideo3, #image" play-pause>
         <a-video id="maVideo3" src="#video-maVideo3" position="0 0 0" height="0.5" width="0.5" rotation="0 0 0" >
-            <a-image id="image" src="#play" position="0 -0.35 0" height="0.15" width="0.15" rotation="1 0 0" ></a-image>
+            <a-image id="image-maVideo3" src="#play" position="0 -0.35 0" height="0.15" width="0.15" rotation="1 0 0" ></a-image>
         </a-video>
       </a-entity>
     
@@ -90,7 +97,9 @@
 
   <!-- Script pour détecter les événements de cible trouvée ou perdue -->
   <script>
-    const maVideo = document.querySelector('#maVideo');
+
+    const maVideo = document.querySelector('.video');
+
     maVideo.addEventListener("targetFound", event => {
       console.log("target found");
       document.getElementById("reload").style.display = "block";
