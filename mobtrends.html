@@ -47,6 +47,18 @@
       }
     })
   </script>
+
+  <link rel="stylesheet" type="text/css" href="css/styles.css">
+
+  <style> 
+
+        .sound-on{
+            background-image: url('images/sound.png') !important;
+            background-color:green !important;
+        }
+    
+  </style>
+
 </head>
 <body>
 
@@ -55,9 +67,9 @@
  
     <!-- Ressources pré-chargées -->
     <a-assets>
-      <video id="video-maVideo1" muted autoplay loop src="videos/octo-video.mp4"></video>
-      <video id="video-maVideo2" muted autoplay loop src="videos/octo-video2.mp4"></video>
-      <video id="video-maVideo3" muted autoplay loop src="videos/octo-video3.mp4"></video>
+      <video id="video-maVideo1"  autoplay loop src="videos/octo-video.mp4"></video>
+      <video id="video-maVideo2" autoplay loop src="videos/octo-video2.mp4"></video>
+      <video id="video-maVideo3"  autoplay loop src="videos/octo-video3.mp4"></video>
       <img id="play" src="images/play-button.png" >
       <img id="pause" src="images/pause.png" >
     </a-assets>
@@ -86,8 +98,15 @@
     
   </a-scene>
 
-  <!-- Bouton de rechargement -->
-  <div id="reload" style="display:none;width:25px;background-image: url('images/reload.png');background-size:cover;background-color:red;height:25px;position:absolute;right:20px;bottom:20px"> </div>
+  <div style="display:flex;flex-direction:row;position:absolute;right:20px;bottom:20px" > 
+
+        <!-- Bouton de rechargement -->
+        <div id="reload" style="display:none;width:25px;margin-right:20px;background-image: url('images/reload.png');background-size:cover;background-color:red;height:25px;"> </div>
+
+        <div id="sound" class="sound-on" style="display:none;width:25px;background-image: url('images/no-sound.png');background-size:cover;background-color:red;height:25px;"> </div>
+
+        
+  </div>
 
   <!-- Script pour détecter les événements de cible trouvée ou perdue -->
   <script>
@@ -112,6 +131,17 @@
                     console.log("target found for video with ID:", currentVideoId);
                     // Afficher le bouton "reload"
                     document.getElementById("reload").style.display = "block";
+                    document.getElementById("sound").style.display = "block";
+
+                    if (soundButton.classList.contains("sound-on")) {
+                        // Si oui, mettre muted à true
+                        videoActuel.muted = false;
+
+                    } else {
+                        // Sinon, mettre muted à false
+                        videoActuel.muted = true;
+                    }
+
                 });
 
                 // Ajouter un écouteur d'événements pour "targetLost"
@@ -119,6 +149,7 @@
                     console.log("target lost");
                     // Masquer le bouton "reload"
                     document.getElementById("reload").style.display = "none";
+                    document.getElementById("sound").style.display = "none";
                     videoActuel.pause();
                     videoActuelControls.setAttribute("src" , "#play")
                 });
@@ -138,6 +169,24 @@
             videoActuelControls.setAttribute("src" , "#pause")
         // Insérez ici le code pour recharger ou rafraîchir les éléments nécessaires
         });
+
+        // Sélectionner l'élément avec l'ID "reload"
+        const soundButton = document.getElementById("sound");
+
+        soundButton.addEventListener("click", event => {
+            // Vérifier si l'élément contient la classe sound-on
+            if (soundButton.classList.contains("sound-on")) {
+                // Si oui, mettre muted à true
+                videoActuel.muted = true;
+                soundButton.classList.toggle("sound-on");
+
+            } else {
+                // Sinon, mettre muted à false
+                videoActuel.muted = false;
+                soundButton.classList.toggle("sound-on");
+            }
+        });
+
 
   </script>
 
