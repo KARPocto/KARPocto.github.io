@@ -95,27 +95,30 @@
         // Apparition du bouton de reload à l'apparition d'un marqueur
 
         let currentVideoId = null;
+        let videoActuel = null;
 
         // Sélectionner tous les éléments avec la classe .video
         const videos = document.querySelectorAll('.video');
 
         // Itérer sur chaque élément sélectionné
         videos.forEach(video => {
-        // Ajouter un écouteur d'événements pour "targetFound"
-        video.addEventListener("targetFound", event => {
-            // Mettre à jour la variable avec l'ID de la vidéo
-            currentVideoId = video.id;
-            console.log("target found for video with ID:", currentVideoId);
-            // Afficher le bouton "reload"
-            document.getElementById("reload").style.display = "block";
-        });
+                // Ajouter un écouteur d'événements pour "targetFound"
+                video.addEventListener("targetFound", event => {
+                    // Mettre à jour la variable avec l'ID de la vidéo
+                    currentVideoId = video.id;
+                    videoActuel = document.getElementById('video-' + currentVideoId);
+                    console.log("target found for video with ID:", currentVideoId);
+                    // Afficher le bouton "reload"
+                    document.getElementById("reload").style.display = "block";
+                });
 
-        // Ajouter un écouteur d'événements pour "targetLost"
-        video.addEventListener("targetLost", event => {
-            console.log("target lost");
-            // Masquer le bouton "reload"
-            document.getElementById("reload").style.display = "none";
-        });
+                // Ajouter un écouteur d'événements pour "targetLost"
+                video.addEventListener("targetLost", event => {
+                    console.log("target lost");
+                    // Masquer le bouton "reload"
+                    document.getElementById("reload").style.display = "none";
+                    videoActuel.pause();
+                });
         });
 
         // Redemarrage video 
@@ -127,7 +130,6 @@
         reloadButton.addEventListener("click", event => {
         // Action à effectuer lors du clic sur le bouton "reload"
             console.log(currentVideoId);
-            const videoActuel = document.getElementById('video-' + currentVideoId);
             videoActuel.load();
             videoActuel.play();
         // Insérez ici le code pour recharger ou rafraîchir les éléments nécessaires
