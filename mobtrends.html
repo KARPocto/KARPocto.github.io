@@ -17,27 +17,25 @@
     AFRAME.registerComponent("play-pause", {
       init: function() {
 
+        // Au clique sur un élément qui a play-pause
         this.el.addEventListener("click", (e)=>{
 
-          console.log("click");
-
-          // Récupère l'id de l'élément sur lequel on a cliqué
+          // Récupère l'id de l'élément sur lequel on cliqué
           const id = $(this.el).attr("id");
 
-          // on récupère sa vidéo associé
+          // On récupère sa vidéo associé dans les assets
           const video = document.getElementById('video-' + id);
 
-          // on récupère son bouton de lecture associé
+          // on récupère son bouton de lecture 
           const videoControls = document.getElementById('image-'+ id);
 
-          console.log("ID de l'élément:", id);
           // Vérifier si la vidéo est en pause
           if (video.paused) {
-            // Démarrer la lecture de la vidéo
+            // Si la vidéo est en pause on lance la vidéo et on change la source du bouton de lecture pour le mettre sur le signe pause
             video.play();
             videoControls.setAttribute("src" , "#pause")
           } else {
-            // Mettre la vidéo en pause
+            // Si la vidéo n'est pas en pause on met en pause la vidéo et on change la source du bouton de lecture pour le mettre sur le signe play
             video.pause();
             videoControls.setAttribute("src" , "#play")
           }
@@ -48,14 +46,9 @@
     })
   </script>
 
-  <link rel="stylesheet" type="text/css" href="css/styles.css">
-
   <style> 
 
-        .sound-on{
-            background-image: url('images/sound.png') !important;
-            background-color:green !important;
-        }
+        .sound-on{ background-image: url('images/sound.png') !important; background-color:green !important;}
     
   </style>
 
@@ -108,28 +101,36 @@
         
   </div>
 
-  <!-- Script pour détecter les événements de cible trouvée ou perdue -->
-  <script>
 
-        // Apparition du bouton de reload à l'apparition d'un marqueur
+  <script>
 
         let currentVideoId = null;
         let videoActuel = null;
         let videoActuelControls = null;
+        const reloadButton = document.getElementById("reload");
+        const soundButton = document.getElementById("sound");
+
+        // Script pour détecter les événements de cible trouvée ou perdue
 
         // Sélectionner tous les éléments avec la classe .video
         const videos = document.querySelectorAll('.video');
 
         // Itérer sur chaque élément sélectionné
         videos.forEach(video => {
-                // Ajouter un écouteur d'événements pour "targetFound"
+
+                // Ajouter un écouteur d'événements pour "targetFound", c'est à dire quand le marqueur est détecté par la caméra
                 video.addEventListener("targetFound", event => {
-                    // Mettre à jour la variable avec l'ID de la vidéo
+
+                    // On récupère l'ID de a-video associé au marqueur détecté
                     currentVideoId = video.id;
+
+                    // On sélectionne sa vidéo associé qui est dans a-assets
                     videoActuel = document.getElementById('video-' + currentVideoId);
+
+                    // On sélectionne son image de contrôle de la vidéo
                     videoActuelControls = document.getElementById('image-'+ currentVideoId);
-                    console.log("target found for video with ID:", currentVideoId);
-                    // Afficher le bouton "reload"
+
+                    // On affiche les boutons reload et sound lorsqu'une vidéo est détectée
                     document.getElementById("reload").style.display = "block";
                     document.getElementById("sound").style.display = "block";
 
@@ -155,11 +156,6 @@
                 });
         });
 
-        // Redemarrage video 
-
-        // Sélectionner l'élément avec l'ID "reload"
-        const reloadButton = document.getElementById("reload");
-
         // Ajouter un écouteur d'événements pour l'événement "click"
         reloadButton.addEventListener("click", event => {
         // Action à effectuer lors du clic sur le bouton "reload"
@@ -169,9 +165,6 @@
             videoActuelControls.setAttribute("src" , "#pause")
         // Insérez ici le code pour recharger ou rafraîchir les éléments nécessaires
         });
-
-        // Sélectionner l'élément avec l'ID "reload"
-        const soundButton = document.getElementById("sound");
 
         soundButton.addEventListener("click", event => {
             // Vérifier si l'élément contient la classe sound-on
