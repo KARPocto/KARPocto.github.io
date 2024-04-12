@@ -96,6 +96,7 @@
 
         let currentVideoId = null;
         let videoActuel = null;
+        let videoActuelControls = null;
 
         // Sélectionner tous les éléments avec la classe .video
         const videos = document.querySelectorAll('.video');
@@ -107,6 +108,7 @@
                     // Mettre à jour la variable avec l'ID de la vidéo
                     currentVideoId = video.id;
                     videoActuel = document.getElementById('video-' + currentVideoId);
+                    videoActuelControls = document.getElementById('image-'+ currentVideoId);
                     console.log("target found for video with ID:", currentVideoId);
                     // Afficher le bouton "reload"
                     document.getElementById("reload").style.display = "block";
@@ -118,6 +120,7 @@
                     // Masquer le bouton "reload"
                     document.getElementById("reload").style.display = "none";
                     videoActuel.pause();
+                    videoActuelControls.setAttribute("src" , "#play")
                 });
         });
 
@@ -132,6 +135,7 @@
             console.log(currentVideoId);
             videoActuel.load();
             videoActuel.play();
+            videoActuelControls.setAttribute("src" , "#pause")
         // Insérez ici le code pour recharger ou rafraîchir les éléments nécessaires
         });
 
