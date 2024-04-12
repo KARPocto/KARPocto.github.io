@@ -17,12 +17,6 @@
     AFRAME.registerComponent("play-pause", {
       init: function() {
 
-        document.getElementById("reload").addEventListener("click", function() {
-            console.log("reload");
-            video.currentTime = 0;
-            video.play();
-        });
-
         this.el.addEventListener("click", (e)=>{
 
           console.log("click");
@@ -72,7 +66,7 @@
     <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
 
     <!-- Entité vidéo avec cible MindAR -->
-    <a-entity class="video1" id="maVideo1" mindar-image-target="targetIndex: 0" raycaster="objects: #maVideo1, #image" play-pause>
+    <a-entity class="video" id="maVideo1" mindar-image-target="targetIndex: 0" raycaster="objects: #maVideo1, #image" play-pause>
       <a-video  id="maVideo1" src="#video-maVideo1" position="0 0 0" height="0.5" width="0.5" rotation="0 0 0" >
           <a-image id="image-maVideo1" src="#play" position="0 -0.35 0" height="0.15" width="0.15" rotation="1 0 0" ></a-image>
       </a-video>
@@ -98,17 +92,46 @@
   <!-- Script pour détecter les événements de cible trouvée ou perdue -->
   <script>
 
-    const maVideo = document.querySelector('.video');
+        // Apparition du bouton de reload à l'apparition d'un marqueur
 
-    maVideo.addEventListener("targetFound", event => {
-      console.log("target found");
-      document.getElementById("reload").style.display = "block";
-    });
+        let currentVideoId = null;
 
-    maVideo.addEventListener("targetLost", event => {
-      console.log("target lost");
-      document.getElementById("reload").style.display = "none";
-    });
+        // Sélectionner tous les éléments avec la classe .video
+        const videos = document.querySelectorAll('.video');
+
+        // Itérer sur chaque élément sélectionné
+        videos.forEach(video => {
+        // Ajouter un écouteur d'événements pour "targetFound"
+        video.addEventListener("targetFound", event => {
+            // Mettre à jour la variable avec l'ID de la vidéo
+            currentVideoId = video.id;
+            console.log("target found for video with ID:", currentVideoId);
+            // Afficher le bouton "reload"
+            document.getElementById("reload").style.display = "block";
+        });
+
+        // Ajouter un écouteur d'événements pour "targetLost"
+        video.addEventListener("targetLost", event => {
+            console.log("target lost");
+            // Masquer le bouton "reload"
+            document.getElementById("reload").style.display = "none";
+        });
+        });
+
+        // Redemarrage video 
+
+        // Sélectionner l'élément avec l'ID "reload"
+        const reloadButton = document.getElementById("reload");
+
+        // Ajouter un écouteur d'événements pour l'événement "click"
+        reloadButton.addEventListener("click", event => {
+        // Action à effectuer lors du clic sur le bouton "reload"
+            console.log(currentVideoId);
+            const videoActuel = document.getElementById('video-' + currentVideoId);
+            videoActuel.load();
+            videoActuel.play();
+        // Insérez ici le code pour recharger ou rafraîchir les éléments nécessaires
+        });
 
   </script>
 
