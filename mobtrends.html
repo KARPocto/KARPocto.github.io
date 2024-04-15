@@ -41,15 +41,17 @@
           }
         })
 
-
       }
     })
   </script>
 
   <style> 
 
-        .sound-on{ background-image: url('images/sound.png') !important; background-color:green !important;}
-    
+        .sound-on{ background-image: url('images/sound.png') !important;}
+        #reload{width:50px;border-radius:10px;margin-right:20px;background-image: url('images/reload.png');background-size:cover;background-color:white;height:50px;}
+        #sound{width:50px;margin-right:20px;border-radius:10px;background-image: url('images/no-sound.png');background-size:cover;background-color:white;height:50px;}
+        #link{width:50px;border-radius:10px;background-image: url('images/picto-video.png');background-size:cover;background-color:white;height:50px;}
+
   </style>
 
 </head>
@@ -71,34 +73,35 @@
     <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
 
     <!-- Entité vidéo avec cible MindAR -->
-    <a-entity class="video" id="maVideo1" mindar-image-target="targetIndex: 0" raycaster="objects: #maVideo1, #image" play-pause>
-      <a-video  id="maVideo1" src="#video-maVideo1" position="0 0 0" height="0.5" width="0.5" rotation="0 0 0" >
-          <a-image id="image-maVideo1" src="#play" position="0 -0.35 0" height="0.15" width="0.15" rotation="1 0 0" ></a-image>
+    <a-entity data-link="https://youtu.be/cPJT95xzxt4?feature=shared" class="video" id="maVideo1" mindar-image-target="targetIndex: 0" raycaster="objects: #elementVideo" play-pause>
+      <a-video  id="elementVideo" src="#video-maVideo1" position="0 0 0" height="0.5" width="0.5" rotation="35 0 0" >
+          <a-image id="image-maVideo1" src="#play" position="0 -0.35 0" height="0.15" width="0.15" rotation="0 0 0" ></a-image>
       </a-video>
     </a-entity>
 
-    <a-entity class="video" id="maVideo2" mindar-image-target="targetIndex: 1" raycaster="objects: #maVideo2, #image" play-pause>
-        <a-video id="maVideo2" src="#video-maVideo2" position="0 0 0" height="0.5" width="0.5" rotation="0 0 0" >
-            <a-image id="image-maVideo2" src="#play" position="0 -0.35 0" height="0.15" width="0.15" rotation="1 0 0" ></a-image>
+    <a-entity data-link="https://youtu.be/SgyQNqwt68w?feature=shared" class="video" id="maVideo2" mindar-image-target="targetIndex: 1" raycaster="objects: #elementVideo" play-pause>
+        <a-video id="elementVideo" src="#video-maVideo2" position="0 0 0" height="0.5" width="0.5" rotation="35 0 0" >
+            <a-image id="image-maVideo2" src="#play" position="0 -0.35 0" height="0.15" width="0.15" rotation="0 0 0" ></a-image>
         </a-video>
       </a-entity>
 
-      <a-entity class="video" id="maVideo3" mindar-image-target="targetIndex: 2" raycaster="objects: #maVideo3, #image" play-pause>
-        <a-video id="maVideo3" src="#video-maVideo3" position="0 0 0" height="0.5" width="0.5" rotation="0 0 0" >
-            <a-image id="image-maVideo3" src="#play" position="0 -0.35 0" height="0.15" width="0.15" rotation="1 0 0" ></a-image>
+      <a-entity data-link="https://youtu.be/V5vKjrIqmkw?feature=shared" class="video" id="maVideo3" mindar-image-target="targetIndex: 2" raycaster="objects: #elementVideo" play-pause>
+        <a-video id="elementVideo" src="#video-maVideo3" position="0 0 0" height="0.5" width="0.5" rotation="35 0 0" >
+            <a-image id="image-maVideo3" src="#play" position="0 -0.35 0" height="0.15" width="0.15" rotation="0 0 0" ></a-image>
         </a-video>
       </a-entity>
     
   </a-scene>
 
-  <div style="display:flex;flex-direction:row;position:absolute;right:20px;bottom:20px" > 
+  <div id="boutons-controls" style="display:none;flex-direction:row;position:absolute;right:20px;bottom:20px" > 
 
         <!-- Bouton de rechargement -->
-        <div id="reload" style="display:none;width:25px;margin-right:20px;background-image: url('images/reload.png');background-size:cover;background-color:red;height:25px;"> </div>
+        <div id="reload" > </div>
 
-        <div id="sound" class="sound-on" style="display:none;width:25px;background-image: url('images/no-sound.png');background-size:cover;background-color:red;height:25px;"> </div>
-
+        <div id="sound" class="sound-on"> </div>
         
+        <a href="#" id="link" class="link" target="_blank"> </a>
+
   </div>
 
 
@@ -124,6 +127,12 @@
                     // On récupère l'ID de a-video associé au marqueur détecté
                     currentVideoId = video.id;
 
+                    // On récupère le lien de la vidéo qui apparaît
+                    var link = document.getElementById(currentVideoId).getAttribute("data-link");
+
+                    // On change le lien du bouton de lien pour qu'il renvoie vers le lien de la vidéo actuel
+                    document.getElementById("link").href = link;
+
                     // On sélectionne sa vidéo associé qui est dans a-assets
                     videoActuel = document.getElementById('video-' + currentVideoId);
 
@@ -131,50 +140,61 @@
                     videoActuelControls = document.getElementById('image-'+ currentVideoId);
 
                     // On affiche les boutons reload et sound lorsqu'une vidéo est détectée
-                    document.getElementById("reload").style.display = "block";
-                    document.getElementById("sound").style.display = "block";
+                    document.getElementById("boutons-controls").style.display = "flex";
 
+                    // Si le bouton du son contient la class sound-on alors on ne mute pas la vidéo
                     if (soundButton.classList.contains("sound-on")) {
-                        // Si oui, mettre muted à true
+                        
                         videoActuel.muted = false;
 
+                    // Si le bouton du son ne contient pas la class sound-on alors on mute la vidéo
                     } else {
-                        // Sinon, mettre muted à false
+                        
                         videoActuel.muted = true;
                     }
 
                 });
 
-                // Ajouter un écouteur d'événements pour "targetLost"
+                // Ajouter un écouteur d'événements pour "targetLost", donc quand le marqueur est perdu par la caméra
                 video.addEventListener("targetLost", event => {
-                    console.log("target lost");
-                    // Masquer le bouton "reload"
-                    document.getElementById("reload").style.display = "none";
-                    document.getElementById("sound").style.display = "none";
+
+                    //On masque les boutons reload et sound
+                    document.getElementById("boutons-controls").style.display = "none";
+
+                    //On met la vidéo qui était visible en pause
                     videoActuel.pause();
+
+                    //On met l'image de contrôle de cette vidéo sur play
                     videoActuelControls.setAttribute("src" , "#play")
+
                 });
         });
 
-        // Ajouter un écouteur d'événements pour l'événement "click"
+        // Lorsque l'on clique sur le bouton reload
         reloadButton.addEventListener("click", event => {
-        // Action à effectuer lors du clic sur le bouton "reload"
-            console.log(currentVideoId);
+
+            // On remet la vidéo actuel à 0
             videoActuel.load();
+            // On la relance à nouveau
             videoActuel.play();
+            // On met l'image de contrôle de la vidéo sur pause
             videoActuelControls.setAttribute("src" , "#pause")
-        // Insérez ici le code pour recharger ou rafraîchir les éléments nécessaires
         });
 
+        // Lorsque l'on clique sur le bouton de son 
         soundButton.addEventListener("click", event => {
-            // Vérifier si l'élément contient la classe sound-on
+            
+            // On regarde si le bouton contient la classe sound-on et donc si le son est activé
             if (soundButton.classList.contains("sound-on")) {
-                // Si oui, mettre muted à true
+                
+                // Si le son est activé on passe en muted
                 videoActuel.muted = true;
+                // On met à jour l'image du bouton en toogle la classe sound-on
                 soundButton.classList.toggle("sound-on");
 
             } else {
-                // Sinon, mettre muted à false
+                
+                // Si le son est muted on l'active
                 videoActuel.muted = false;
                 soundButton.classList.toggle("sound-on");
             }
