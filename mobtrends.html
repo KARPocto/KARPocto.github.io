@@ -12,6 +12,44 @@
   <!-- Script pour le composant personnalisé "play-pause" -->
   <script>
 
+    // register component
+
+    AFRAME.registerComponent("zoom", {
+        // init callback
+        init: function() {
+        // react to press / release events to know if the element is selected
+        this.el.addEventListener("mousedown", e => {
+            this.selected = true;
+            console.log("mousedown")
+        })
+        this.el.addEventListener("mouseup", e => {
+            this.selected = false;
+            console.log("mouseup")
+        })
+        this.el.sceneEl.addEventListener("mousewheel", evt => {
+            console.log("mousewheel")
+            if (!this.selected) return; // ignore when not selected
+            
+            const scale_factor = evt.deltaY < 0 ? 1.1 : 0.9; // scale up or down depending on the scroll direction
+            
+            // Appliquer la nouvelle échelle
+            const newScale = this.el.object3D.scale.clone().multiplyScalar(scale_factor);
+            
+            // Limiter l'échelle maximale
+            const maxScale = 5; // Mettez la valeur maximale que vous souhaitez
+            if (newScale.x <= maxScale && newScale.y <= maxScale && newScale.z <= maxScale) {
+                // Limiter l'échelle minimale
+                const minScale = 0.5; // Mettez la valeur minimale que vous souhaitez
+                if (newScale.x >= minScale && newScale.y >= minScale && newScale.z >= minScale) {
+                    this.el.object3D.scale.copy(newScale);
+                }
+            }
+            
+            evt.preventDefault();
+        });
+        }
+    })
+
     // Composant Play-Pause pour les vidéos
 
     AFRAME.registerComponent("play-pause", {
@@ -67,6 +105,7 @@
       <video id="video-maVideo3"  autoplay loop src="videos/octo-video3.mp4"></video>
       <img id="play" src="images/play-button.png" >
       <img id="pause" src="images/pause.png" >
+      <a-asset-item id="octo3D" src="modeles3D/vaisseau.gltf"></a-asset-item>
     </a-assets>
 
     <!-- Caméra -->
@@ -74,21 +113,25 @@
 
     <!-- Entité vidéo avec cible MindAR -->
     <a-entity data-link="https://youtu.be/cPJT95xzxt4?feature=shared" class="video" id="maVideo1" mindar-image-target="targetIndex: 0" raycaster="objects: #elementVideo" play-pause>
-      <a-video  id="elementVideo" src="#video-maVideo1" position="0 0 0" height="0.5" width="0.5" rotation="35 0 0" >
+      <a-video zoom id="elementVideo" src="#video-maVideo1" position="0 0 0" height="0.5" width="0.5" rotation="35 0 0" >
           <a-image id="image-maVideo1" src="#play" position="0 -0.35 0" height="0.15" width="0.15" rotation="0 0 0" ></a-image>
       </a-video>
     </a-entity>
 
     <a-entity data-link="https://youtu.be/SgyQNqwt68w?feature=shared" class="video" id="maVideo2" mindar-image-target="targetIndex: 1" raycaster="objects: #elementVideo" play-pause>
-        <a-video id="elementVideo" src="#video-maVideo2" position="0 0 0" height="0.5" width="0.5" rotation="35 0 0" >
+        <a-video zoom id="elementVideo" src="#video-maVideo2" position="0 0 0" height="0.5" width="0.5" rotation="35 0 0" >
             <a-image id="image-maVideo2" src="#play" position="0 -0.35 0" height="0.15" width="0.15" rotation="0 0 0" ></a-image>
         </a-video>
       </a-entity>
 
-      <a-entity data-link="https://youtu.be/V5vKjrIqmkw?feature=shared" class="video" id="maVideo3" mindar-image-target="targetIndex: 2" raycaster="objects: #elementVideo" play-pause>
-        <a-video id="elementVideo" src="#video-maVideo3" position="0 0 0" height="0.5" width="0.5" rotation="35 0 0" >
-            <a-image id="image-maVideo3" src="#play" position="0 -0.35 0" height="0.15" width="0.15" rotation="0 0 0" ></a-image>
-        </a-video>
+      <a-entity data-link="https://youtu.be/V5vKjrIqmkw?feature=shared" class="video" id="maVideo3" mindar-image-target="targetIndex: 2" raycaster="objects: #elementVideo, #model" play-pause>
+        
+            <a-video zoom id="elementVideo" src="#video-maVideo3" position="0 0 0" height="0.5" width="0.5" rotation="35 0 0" >
+                <a-image id="image-maVideo3" src="#play" position="0 -0.35 0" height="0.15" width="0.15" rotation="0 0 0" ></a-image>
+            </a-video>
+        
+            <a-gltf-model id="model" rotation="0 0 0 " position="0 0.5 0" scale="0.1 0.1 0.1" src="#octo3D" >
+        
       </a-entity>
     
   </a-scene>
