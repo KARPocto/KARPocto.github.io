@@ -12,9 +12,31 @@
   <!-- Script pour le composant personnalisé "play-pause" -->
   <script>
 
-    // register component
+    // Composant Zoom Objet
 
-    AFRAME.registerComponent("zoom", {
+        AFRAME.registerComponent("test", {
+            // init callback
+            init: function() {
+            // react to press / release events to know if the element is selected
+            this.el.addEventListener("mousedown", e => {
+                this.selected = true;
+            })
+            this.el.addEventListener("mouseup", e => {
+                this.selected = false;
+            })
+            // if this is selected, scale up/down when the mouse is scrolled
+            this.el.sceneEl.addEventListener("mousewheel", evt => {
+                if (!this.selected) return; // ignore when not selected
+                const scale_factor = evt.deltaY < 0 ? 1.1 : 0.9 // scale up or down depending on the scroll direction
+                this.el.object3D.scale.multiplyScalar(scale_factor);
+                evt.preventDefault();
+            })
+            }
+        })
+
+    // Composant Zoom Video
+
+    AFRAME.registerComponent("zoom-video", {
         // init callback
         init: function() {
         // react to press / release events to know if the element is selected
@@ -27,7 +49,7 @@
             console.log("mouseup")
         })
         this.el.sceneEl.addEventListener("mousewheel", evt => {
-            console.log("mousewheel")
+
             if (!this.selected) return; // ignore when not selected
             
             const scale_factor = evt.deltaY < 0 ? 1.1 : 0.9; // scale up or down depending on the scroll direction
@@ -96,16 +118,19 @@
 <body>
 
   <!-- Scène A-Frame -->
-  <a-scene cursor="rayOrigin: mouse" mindar-image="imageTargetSrc: images/mobTrend.mind; filterMinCF:0.0005; filterBeta: 0.0005" color-space="sRGB" renderer="colorManagement: true, physicallyCorrectLights" vr-mode-ui="enabled: false" device-orientation-permission-ui="enabled: false">
+  <a-scene cursor="rayOrigin: mouse" mindar-image="imageTargetSrc: markers/marqueurs.mind; filterMinCF:0.0005; filterBeta: 0.0005" color-space="sRGB" renderer="colorManagement: true, physicallyCorrectLights" vr-mode-ui="enabled: false" device-orientation-permission-ui="enabled: false">
  
     <!-- Ressources pré-chargées -->
     <a-assets>
+
       <video id="video-maVideo1"  autoplay loop src="videos/octo-video.mp4"></video>
       <video id="video-maVideo2" autoplay loop src="videos/octo-video2.mp4"></video>
       <video id="video-maVideo3"  autoplay loop src="videos/octo-video3.mp4"></video>
       <img id="play" src="images/play-button.png" >
       <img id="pause" src="images/pause.png" >
       <a-asset-item id="octo3D" src="modeles3D/vaisseau.gltf"></a-asset-item>
+      <audio id="orage" src="sound/sound.mp3" ></audio>
+
     </a-assets>
 
     <!-- Caméra -->
@@ -113,25 +138,35 @@
 
     <!-- Entité vidéo avec cible MindAR -->
     <a-entity data-link="https://youtu.be/cPJT95xzxt4?feature=shared" class="video" id="maVideo1" mindar-image-target="targetIndex: 0" raycaster="objects: #elementVideo" play-pause>
-      <a-video zoom id="elementVideo" src="#video-maVideo1" position="0 0 0" height="0.5" width="0.5" rotation="35 0 0" >
+      
+        <a-video zoom-video id="elementVideo" src="#video-maVideo1" position="0 0 0" height="0.5" width="0.5" rotation="35 0 0" >
           <a-image id="image-maVideo1" src="#play" position="0 -0.35 0" height="0.15" width="0.15" rotation="0 0 0" ></a-image>
-      </a-video>
+        </a-video>
+
     </a-entity>
 
     <a-entity data-link="https://youtu.be/SgyQNqwt68w?feature=shared" class="video" id="maVideo2" mindar-image-target="targetIndex: 1" raycaster="objects: #elementVideo" play-pause>
-        <a-video zoom id="elementVideo" src="#video-maVideo2" position="0 0 0" height="0.5" width="0.5" rotation="35 0 0" >
+        
+        <a-video zoom-video id="elementVideo" src="#video-maVideo2" position="0 0 0" height="0.5" width="0.5" rotation="35 0 0" >
             <a-image id="image-maVideo2" src="#play" position="0 -0.35 0" height="0.15" width="0.15" rotation="0 0 0" ></a-image>
         </a-video>
+
       </a-entity>
 
       <a-entity data-link="https://youtu.be/V5vKjrIqmkw?feature=shared" class="video" id="maVideo3" mindar-image-target="targetIndex: 2" raycaster="objects: #elementVideo, #model" play-pause>
-        
-            <a-video zoom id="elementVideo" src="#video-maVideo3" position="0 0 0" height="0.5" width="0.5" rotation="35 0 0" >
+
+            <a-video zoom-video id="elementVideo" src="#video-maVideo3" position="0 0 0" height="0.5" width="0.5" rotation="35 0 0" >
                 <a-image id="image-maVideo3" src="#play" position="0 -0.35 0" height="0.15" width="0.15" rotation="0 0 0" ></a-image>
             </a-video>
+            
+            <a-gltf-model test id="model" rotation="0 0 0 " position="0 0.5 0" scale="0.1 0.1 0.1" src="#octo3D" >
+                
+      </a-entity>
+
+      <a-entity id="objetVaisseau" class="objet3D" mindar-image-target="targetIndex: 3" raycaster="objects: #vaisseau" play-pause sound="src: #orage; positional: false">
         
-            <a-gltf-model id="model" rotation="0 0 0 " position="0 0.5 0" scale="0.1 0.1 0.1" src="#octo3D" >
-        
+            <a-gltf-model test id="vaisseau" rotation="0 0 0 " position="0 0 0" scale="0.1 0.1 0.1" src="#octo3D" >
+      
       </a-entity>
     
   </a-scene>
@@ -147,7 +182,6 @@
 
   </div>
 
-
   <script>
 
         let currentVideoId = null;
@@ -156,7 +190,31 @@
         const reloadButton = document.getElementById("reload");
         const soundButton = document.getElementById("sound");
 
-        // Script pour détecter les événements de cible trouvée ou perdue
+        // Script pour activer le son d'un modèle 3D si il en a un 
+
+        const objets3D = document.querySelectorAll('.objet3D');
+
+        objets3D.forEach(objet => {
+
+            objet.addEventListener("targetFound", event => {
+
+                const elementDetecte = event.target; // Récupérer l'élément détecté
+                const elementId = elementDetecte.getAttribute("id"); // Récupérer l'ID de l'élément détecté
+
+                var entity = document.querySelector('[sound]');
+                entity.components.sound.playSound();
+
+            });
+
+            // Ajouter un écouteur d'événements pour "targetLost", donc quand le marqueur est perdu par la caméra
+            objet.addEventListener("targetLost", event => {
+                
+                var entity = document.querySelector('[sound]');
+                entity.components.sound.stopSound();
+
+            });
+
+        });
 
         // Sélectionner tous les éléments avec la classe .video
         const videos = document.querySelectorAll('.video');
@@ -242,7 +300,6 @@
                 soundButton.classList.toggle("sound-on");
             }
         });
-
 
   </script>
 
