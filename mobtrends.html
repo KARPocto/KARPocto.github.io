@@ -102,7 +102,7 @@
         })
 
       }
-    })
+    })  
   </script>
 
   <style> 
@@ -110,6 +110,8 @@
         .sound-on{ background-image: url('images/sound.png') !important;}
         #reload{width:50px;border-radius:10px;margin-right:20px;background-image: url('images/reload.png');background-size:cover;background-color:white;height:50px;}
         #sound{width:50px;margin-right:20px;border-radius:10px;background-image: url('images/no-sound.png');background-size:cover;background-color:white;height:50px;}
+        #sound-audio{width:50px;margin-right:20px;border-radius:10px;background-image: url('images/no-sound.png');background-size:cover;background-color:white;height:50px;}
+        .sound-audio-none{width:50px;margin-right:20px;border-radius:10px;background-image: url('images/no-sound.png') !important;background-size:cover;background-color:white;height:50px;}
         #link{width:50px;border-radius:10px;background-image: url('images/picto-video.png');background-size:cover;background-color:white;height:50px;}
 
   </style>
@@ -119,7 +121,7 @@
 
   <!-- Scène A-Frame -->
   <a-scene cursor="rayOrigin: mouse" mindar-image="imageTargetSrc: markers/marqueurs.mind; filterMinCF:0.0005; filterBeta: 0.0005" color-space="sRGB" renderer="colorManagement: true, physicallyCorrectLights" vr-mode-ui="enabled: false" device-orientation-permission-ui="enabled: false">
- 
+    
     <!-- Ressources pré-chargées -->
     <a-assets>
 
@@ -171,7 +173,7 @@
     
   </a-scene>
 
-  <div id="boutons-controls" style="display:none;flex-direction:row;position:absolute;right:20px;bottom:20px" > 
+  <div id="boutons-controls-videos" style="display:none;flex-direction:row;position:absolute;right:20px;bottom:20px" > 
 
         <!-- Bouton de rechargement -->
         <div id="reload" > </div>
@@ -179,6 +181,12 @@
         <div id="sound" class="sound-on"> </div>
         
         <a href="#" id="link" class="link" target="_blank"> </a>
+
+  </div>
+
+  <div id="boutons-controls-audio" style="display:none;flex-direction:row;position:absolute;right:20px;bottom:20px" > 
+
+    <div id="sound-audio" class="sound-on"> </div>
 
   </div>
 
@@ -192,6 +200,9 @@
 
         // Script pour activer le son d'un modèle 3D si il en a un 
 
+        let soundComponent = null;
+        let soundActivated = true; // Variable pour suivre l'état du son (activé ou désactivé)
+
         const objets3D = document.querySelectorAll('.objet3D');
 
         objets3D.forEach(objet => {
@@ -201,20 +212,61 @@
                 const elementDetecte = event.target; // Récupérer l'élément détecté
                 const elementId = elementDetecte.getAttribute("id"); // Récupérer l'ID de l'élément détecté
 
-                var entity = document.querySelector('[sound]');
-                entity.components.sound.playSound();
+                // Sélectionnez le composant 'sound' spécifique de l'élément détecté
+                soundComponent = elementDetecte.components.sound;
+
+                // Vérifiez si le composant 'sound' existe et s'il a une source audio
+                if (soundComponent && soundComponent.data.src) {
+
+                    // Si il a une source audio on affiche le bouton audio
+                    document.getElementById("boutons-controls-audio").style.display = "flex";
+
+                    // On lance l'audio
+                    if (soundActivated) {
+                        soundComponent.playSound();
+                    }
+
+                }
 
             });
 
-            // Ajouter un écouteur d'événements pour "targetLost", donc quand le marqueur est perdu par la caméra
+            // Lorsque le marqueur est perdu 
             objet.addEventListener("targetLost", event => {
-                
-                var entity = document.querySelector('[sound]');
-                entity.components.sound.stopSound();
+
+                if (soundComponent && !soundComponent.paused) {
+                    // On cache le bouton du son 
+                    document.getElementById("boutons-controls-audio").style.display = "none";
+                    // On arrête le son
+                    soundComponent.stopSound();
+                }
 
             });
 
         });
+
+        // Ajoutez un gestionnaire d'événements de clic au bouton du son d'audio des modèles 3D
+
+        const boutonSonAudio = document.getElementById('sound-audio');
+
+        boutonSonAudio.addEventListener('click', () => { 
+
+            // On toggle la class sound-audio-none sur le bouton
+            boutonSonAudio.classList.toggle("sound-audio-none");
+
+            // Basculez l'état du son
+            soundActivated = !soundActivated;
+
+            if (soundComponent) {
+                if (soundActivated) {
+                    // Si le son est activé, jouez-le
+                    soundComponent.playSound();
+                } else {
+                    // Sinon, arrêtez le son
+                    soundComponent.stopSound();
+                }
+            }
+        });
+
 
         // Sélectionner tous les éléments avec la classe .video
         const videos = document.querySelectorAll('.video');
@@ -241,7 +293,7 @@
                     videoActuelControls = document.getElementById('image-'+ currentVideoId);
 
                     // On affiche les boutons reload et sound lorsqu'une vidéo est détectée
-                    document.getElementById("boutons-controls").style.display = "flex";
+                    document.getElementById("boutons-controls-videos").style.display = "flex";
 
                     // Si le bouton du son contient la class sound-on alors on ne mute pas la vidéo
                     if (soundButton.classList.contains("sound-on")) {
@@ -260,7 +312,7 @@
                 video.addEventListener("targetLost", event => {
 
                     //On masque les boutons reload et sound
-                    document.getElementById("boutons-controls").style.display = "none";
+                    document.getElementById("boutons-controls-videos").style.display = "none";
 
                     //On met la vidéo qui était visible en pause
                     videoActuel.pause();
