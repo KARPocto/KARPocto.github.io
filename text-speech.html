@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Webcam Capture</title>
+    <style>
+        #video {
+            width: 100%;
+            height: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>Webcam Capture</h1>
+    <video id="video" autoplay playsinline></video>
+    <button id="captureButton">Capturer</button>
+    <canvas id="canvas" style="display: none;"></canvas>
+
+    <script>
+        var video = document.getElementById('video');
+        var canvas = document.getElementById('canvas');
+        var captureButton = document.getElementById('captureButton');
+
+        // Récupérer la vidéo de la webcam et l'afficher dans la balise <video>
+        navigator.mediaDevices.getUserMedia({ video: true })
+            .then(function (stream) {
+                video.srcObject = stream;
+            })
+            .catch(function (err) {
+                console.log("Une erreur est survenue : " + err);
+            });
+
+        // Fonction pour capturer une image de la webcam
+        function captureImage() {
+            var context = canvas.getContext('2d');
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+            var imageDataURL = canvas.toDataURL('image/png');
+            // Créer un lien de téléchargement pour l'image capturée
+            var downloadLink = document.createElement('a');
+            downloadLink.href = imageDataURL;
+            downloadLink.download = 'captured_image.png'; // Nom du fichier à télécharger
+            downloadLink.click();
+        }
+
+        // Associer la fonction captureImage au clic sur le bouton
+        captureButton.addEventListener('click', captureImage);
+    </script>
+</body>
+</html>
