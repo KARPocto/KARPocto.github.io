@@ -42,11 +42,9 @@
         // react to press / release events to know if the element is selected
         this.el.addEventListener("mousedown", e => {
             this.selected = true;
-            console.log("mousedown")
         })
         this.el.addEventListener("mouseup", e => {
             this.selected = false;
-            console.log("mouseup")
         })
         this.el.sceneEl.addEventListener("mousewheel", evt => {
 
