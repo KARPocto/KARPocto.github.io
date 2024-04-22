@@ -1,17 +1,23 @@
-import pyttsx3
-import sys, pytesseract, cv2
+import sys
+import pytesseract
+import cv2
+import subprocess
 
-engine = pyttsx3.init('dummy')
+# Récupérer le nom de l'image depuis la ligne de commande
+image_name = sys.argv[1]
 
-""" RATE"""
-rate = engine.getProperty('rate')  # getting details of current speaking rate
-print(rate)  # printing current voice   rate
-engine.setProperty('rate', 125)  # setting up new voice rate
+# Charger l'image en utilisant cv2
+image = cv2.imread(image_name)
 
-"""VOLUME"""
-volume = engine.getProperty('volume')  # getting to know current volume level (min=0 and max=1)
-print(volume)  # printing current volume level
-engine.setProperty('volume', 1.0)  # setting up volume level  between 0 and 1
+# Convertir l'image en niveaux de gris
+gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
-engine.say("Bonjour je m'appelle Paul")
-engine.runAndWait()
+# Extraire le texte de l'image
+text = pytesseract.image_to_string(gray)
+
+# Exporter le texte extrait dans un fichier results.txt
+with open('results.txt', 'w') as f:
+    f.write(text)
+
+# Utiliser NSSpeechSynthesizer pour la synthèse vocale
+subprocess.run(['say', text])
