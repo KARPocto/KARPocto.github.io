@@ -6,8 +6,8 @@
     <title>Webcam Capture</title>
     <style>
         #video {
-            width: 100%;
-            height: auto;
+            width: 100%; /* Utilise la largeur maximale disponible */
+            height: auto; /* Ajuste automatiquement la hauteur en conservant le ratio */
         }
     </style>
 </head>
@@ -22,8 +22,17 @@
         var canvas = document.getElementById('canvas');
         var captureButton = document.getElementById('captureButton');
 
+        // Contraintes pour une qualité maximale
+        var constraints = {
+            video: {
+                width: { max: 4096 },
+                height: { max: 2160 },
+                facingMode: 'environment' // Utiliser la caméra arrière (si disponible)
+            }
+        };
+
         // Récupérer la vidéo de la webcam et l'afficher dans la balise <video>
-        navigator.mediaDevices.getUserMedia({ video: true })
+        navigator.mediaDevices.getUserMedia(constraints)
             .then(function (stream) {
                 video.srcObject = stream;
             })
